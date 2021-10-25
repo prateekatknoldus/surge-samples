@@ -44,13 +44,17 @@ object Boot extends App with PlayJsonSupport with BankAccountRequestSerializer {
             }
           }
         },
+        path("stopEngine") {
+          val engineStopFut = BankAccountEngine.surgeEngine.stop()
+          onSuccess(engineStopFut)(_ => complete(StatusCodes.OK))
+        },
         path(JavaUUID) { uuid =>
           get {
             MDC.put("account_number", uuid.toString)
             val accountStateF = BankAccountEngine.surgeEngine.aggregateFor(uuid).getState
             log.info("Get account owner's state ")
             onSuccess(accountStateF) {
-              case Some(accountState) => complete(accountState.balance)
+              case Some(accountState) => complete(accountState)
               case None => complete(StatusCodes.NotFound)
             }
           }
@@ -64,5 +68,4 @@ object Boot extends App with PlayJsonSupport with BankAccountRequestSerializer {
   val bindingFuture = Http().newServerAt(host, port).bind(route)
 
   log.info(s"Server is running on  http://$host:$port")
-
 }
