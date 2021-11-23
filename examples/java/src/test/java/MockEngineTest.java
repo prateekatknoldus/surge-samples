@@ -27,24 +27,32 @@ class MockEngineTest {
     @Mock
     AggregateRef<BankAccount, BankAccountCommand, BankAccountEvent> mockAggregate;
 
+    @Mock
+    CompletionStage<CommandResult<BankAccount>> mockCompletionStage;
+
+    @Mock
+    CompletableFuture<CommandResult<BankAccount>> mockCompletableFuture;
+
+    @Mock
+    CommandSuccess<BankAccount> mockCommandSuccess;
+
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testMockEngine() {
+    void testMockEngine() throws ExecutionException, InterruptedException {
         UUID accountNumber = UUID.randomUUID();
+        BankAccount bankAccount = new BankAccount(accountNumber, "Jane Doe", "1234", 1000.0);
+        CreateAccount createAccount = new CreateAccount(accountNumber,  bankAccount.accountOwner(), bankAccount.securityCode(), bankAccount.balance());
 
         when(mockSurgeEngine.aggregateFor(accountNumber)).thenReturn(mockAggregate);
+        when(mockAggregate.sendCommand(createAccount)).thenReturn(mockCompletionStage);
+        when(mockCompletionStage.toCompletableFuture()).thenReturn(mockCompletableFuture);
+        when(mockCompletableFuture.get()).thenReturn(mockCommandSuccess);
+        when(mockCommandSuccess.aggregateState()).thenReturn(Optional.of(bankAccount));
 
-        CreateAccount createAccount = new CreateAccount(accountNumber, "Jane Doe", "1234", 1000.0);
-        BankAccount expectedBankAccount = new BankAccount(accountNumber, createAccount.accountOwner(), createAccount.securityCode(), createAccount.initialBalance());
-        CommandSuccess<BankAccount> commandResponse = new CommandSuccess(Optional.of(expectedBankAccount));
-        CompletionStage<CommandResult<BankAccount>> bankAccountCompletionStage = CompletableFuture.completedFuture(commandResponse);
-
-        when(mockSurgeEngine.aggregateFor(accountNumber).sendCommand(createAccount)).thenReturn(bankAccountCompletionStage);
-
-        Assertions.assertEquals(mockSurgeEngine.aggregateFor(accountNumber).sendCommand(createAccount), bankAccountCompletionStage);
+        Assertions.assertEquals(mockSurgeEngine.aggregateFor(accountNumber).sendCommand(createAccount).toCompletableFuture().get(), mockCommandSuccess);
     }
 }
