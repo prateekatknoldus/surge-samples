@@ -21,16 +21,18 @@
     </build>
 
     <properties>
-        <surge.version>0.5.18-SNAPSHOT</surge.version>
-        <scala.binary.version>2.13</scala.binary.version>
+        <surge.version>0.5.43-SNAPSHOT</surge.version>
+        <scala.binary.version>2.12</scala.binary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.ukg</groupId>
-            <artifactId>surge-engine-command-javadsl_${scala.binary.version}</artifactId>
+            <artifactId>surge-engine-command-javadsl_2.12</artifactId>
             <version>${surge.version}</version>
+<!--            <scope>system</scope>-->
+<!--            <systemPath>/home/knoldus/.ivy2/local/com.ukg/surge-engine-command-javadsl_2.12:0.5.42-SNAPSHOT</systemPath>-->
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
         <dependency>
@@ -47,6 +49,27 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.31</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>4.1.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

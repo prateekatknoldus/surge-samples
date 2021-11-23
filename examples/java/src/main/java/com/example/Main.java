@@ -28,9 +28,9 @@ public class Main {
 
     public static void main(String[] args) {
         BankAccountSurgeModel bankAccountSurgeModel = new BankAccountSurgeModel();
-        SurgeCommand<UUID, BankAccount, BankAccountCommand, ?, BankAccountEvent> surgeCommand =
+        SurgeCommand<UUID, BankAccount, BankAccountCommand, ?, BankAccountEvent> surgeEngine =
                 SurgeCommand$.MODULE$.create(bankAccountSurgeModel);
-        surgeCommand.start();
+        surgeEngine.start();
 
         UUID accountNumber = UUID.randomUUID();
         logger.info("Account number is: {}", accountNumber);
@@ -38,7 +38,7 @@ public class Main {
                 "1234", 1000.0);
 
         CompletionStage<CommandResult<BankAccount>> completionStageCreateAccount =
-                surgeCommand.aggregateFor(accountNumber).sendCommand(createAccount);
+                surgeEngine.aggregateFor(accountNumber).sendCommand(createAccount);
 
         completionStageCreateAccount.whenComplete((CommandResult<com.example.account.BankAccount> result, Throwable ex) -> {
             if (ex != null) {
@@ -55,7 +55,7 @@ public class Main {
         CreditAccount creditAccount = new CreditAccount(accountNumber, 100.0);
 
         CompletionStage<CommandResult<BankAccount>> completionStageCreditAccount =
-                surgeCommand.aggregateFor(accountNumber).sendCommand(creditAccount);
+                surgeEngine.aggregateFor(accountNumber).sendCommand(creditAccount);
         completionStageCreditAccount.whenComplete((CommandResult<com.example.account.BankAccount> result, Throwable ex) -> {
             if (ex != null) {
                 ex.printStackTrace();
@@ -70,7 +70,7 @@ public class Main {
 
         DebitAccount debitAccount = new DebitAccount(accountNumber, 200.0);
         CompletionStage<CommandResult<BankAccount>> completionStageDebitAccount =
-                surgeCommand.aggregateFor(accountNumber).sendCommand(debitAccount);
+                surgeEngine.aggregateFor(accountNumber).sendCommand(debitAccount);
         completionStageDebitAccount.whenComplete((CommandResult<com.example.account.BankAccount> result, Throwable ex) -> {
             if (ex != null) {
                 ex.printStackTrace();
@@ -83,7 +83,7 @@ public class Main {
             }
         });
 
-        CompletionStage<Optional<BankAccount>> currentState = surgeCommand.aggregateFor(accountNumber).getState();
+        CompletionStage<Optional<BankAccount>> currentState = surgeEngine.aggregateFor(accountNumber).getState();
         currentState.whenComplete((bankAccount, throwable) ->
         {
             if (throwable != null) {

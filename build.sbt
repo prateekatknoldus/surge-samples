@@ -8,8 +8,12 @@ ThisBuild / scalaVersion := "2.13.5"
 
 publish / skip := true
 
+lazy val `surge-java-sample` = (project in file("examples/java"))
+  .settings(libraryDependencies ++= Seq(Akka.http, akkaHttpPlayJson, surgeJavadsl , gatling, gatlingFramework), publish / skip := true)
+  .enablePlugins(JavaServerAppPackaging)
+
 lazy val `surge-scala-sample` = (project in file("examples/scala"))
-  .settings(libraryDependencies ++= Seq(Akka.http, akkaHttpPlayJson, surge, gatling, gatlingFramework), publish / skip := true)
+  .settings(libraryDependencies ++= Seq(Akka.http, akkaHttpPlayJson, surgeScaladsl, gatling, gatlingFramework), publish / skip := true)
   .enablePlugins(JavaServerAppPackaging)
 
 lazy val `surge-gatling-sample` = (project in file("examples/surge-gatling"))
